@@ -25,6 +25,7 @@ import { MatIconModule } from '@angular/material/icon';
 export class FormComponent {
   protected latitude = '';
   protected longitude = '';
+  protected time = '';
   protected latitudeRegex = /[NSns][0-9]{1,2}[.][0-9]{6}/g;
   protected longitudeRegex = /[EWew][0-9]{1,2,3}[.][0-9]{6}/g;
 }
