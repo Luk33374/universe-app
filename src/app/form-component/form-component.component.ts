@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -26,6 +26,7 @@ export class FormComponent {
   protected latitude = '';
   protected longitude = '';
   protected time = '';
+  protected date = new Date();
   protected latitudeRegex = /[NSns][0-9]{1,2}[.][0-9]{6}/g;
   protected longitudeRegex = /[EWew][0-9]{1,2,3}[.][0-9]{6}/g;
 }
