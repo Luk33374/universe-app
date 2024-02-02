@@ -3,3 +3,9 @@
     flex-direction: column;
     align-items: flex-start;
   }
+  app-canvas{
+    width: 100%;
+  }
+  html, body {
+    overflow: hidden;
+  }
