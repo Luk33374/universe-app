@@ -56,6 +56,7 @@ export class EngineService {
       const daysOfSymulation = 270;
       planetMesh.position.z = this.calculateCoordinate(foundPlanetData, daysOfSymulation);
       planetMesh.position.x = this.calculateCoordinate(foundPlanetData, daysOfSymulation, true);
+      planetMesh.position.y = planetMesh.position.z * foundPlanetData.orbitalInclanation / 100;
     });
   }
 
