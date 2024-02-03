@@ -1,7 +1,7 @@
 import { Injectable, PLATFORM_ID } from '@angular/core';
 import * as BABYLON from 'babylonjs';
 import { Planet, PlanetOrbits } from '../model/planets-orbits';
-import { MKM } from '../model/distance-types';
+import { MKM, OrbitInDays } from '../model/distance-types';
 @Injectable({
   providedIn: 'root'
 })
@@ -53,8 +53,9 @@ export class EngineService {
   private movePlanets(planetsMeshesArray: BABYLON.Mesh[]): void{
     planetsMeshesArray.forEach((planetMesh: BABYLON.Mesh): void =>{
       const foundPlanetData = this.getPlanetData(planetMesh.name);
-      planetMesh.position.z = this.calculateY(foundPlanetData, 2000);
-      planetMesh.position.x = this.calculateX(foundPlanetData, 2000);
+      const daysOfSymulation = 270;
+      planetMesh.position.z = this.calculateCoordinate(foundPlanetData, daysOfSymulation);
+      planetMesh.position.x = this.calculateCoordinate(foundPlanetData, daysOfSymulation, true);
     });
   }
 
@@ -62,24 +63,19 @@ export class EngineService {
     return PlanetOrbits.GetAllPlanets()
     .filter((planet: Planet): boolean => planetName === planet.planetName)[0];
   }
-  private calculateY(foundPlanetData: Planet, dayOfOrbit: number): MKM{
+
+  private calculateCoordinate(foundPlanetData: Planet, dayOfOrbit: number,isXCoordinate?: boolean): MKM{
     const r = foundPlanetData.orbitDiameter;
     const orbitInDays = foundPlanetData.orbitLength;
-    if(r === 0){
+    if(r === 0 || orbitInDays === 0){
       return 0 as MKM;
     }
-    const orbitPositionY = Math.sin(((dayOfOrbit%orbitInDays)/orbitInDays)*Math.PI*2) * r;
-    console.log(foundPlanetData.planetName);
-    return orbitPositionY as MKM;
+    const xMultiplayer = isXCoordinate? Math.PI/2: 0;
+    const orbitPosition = Math.sin(this.getRadianOfOrbit(dayOfOrbit,orbitInDays)+ xMultiplayer) * r;
+    return orbitPosition as MKM;
   }
 
-  private calculateX(foundPlanetData: Planet, dayOfOrbit: number): MKM{
-    const r = foundPlanetData.orbitDiameter;
-    const orbitInDays = foundPlanetData.orbitLength;
-    if(r === 0){
-      return 0 as MKM;
-    }
-    const orbitPositionX = Math.sin(((dayOfOrbit%orbitInDays)/orbitInDays)*Math.PI*2+Math.PI/2) * r;
-    return orbitPositionX as MKM;
+  private getRadianOfOrbit(dayOfOrbit: number, orbitInDays: OrbitInDays): number{
+    return ((dayOfOrbit%orbitInDays)/orbitInDays)*Math.PI*2;
   }
 }
