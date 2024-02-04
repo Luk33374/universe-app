@@ -6,6 +6,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
+import { OrbitsService } from '../services/orbits.service';
 
 @Component({
   selector: 'app-form-component',
@@ -32,10 +33,10 @@ export class FormComponent {
   protected longitudeRegex = /[EWew][0-9]{1,2,3}[.][0-9]{6}/g;
 
   private conunctionDate = Date.parse('01 Jan 1970 00:00:00 GMT');
-  
+  constructor(private orbitService: OrbitsService) {}
   protected onClick(): void{
     const milisecondsToDaysConvertionRate = 86400000;
     const dateDiff = Math.abs(this.date - this.conunctionDate)/ milisecondsToDaysConvertionRate;
-    console.log(dateDiff);
+    this.orbitService.setNewPlanetsPosition(dateDiff);
   }
 }

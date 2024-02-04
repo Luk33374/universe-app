@@ -1,11 +1,14 @@
-import { Injectable, PLATFORM_ID } from '@angular/core';
+import { Injectable } from '@angular/core';
 import * as BABYLON from 'babylonjs';
 import { Planet, PlanetOrbits } from '../model/planets-orbits';
 import { MKM, OrbitInDays } from '../model/distance-types';
+import { OrbitsService } from './orbits.service';
 @Injectable({
   providedIn: 'root'
 })
 export class EngineService {
+
+  constructor(private orbitService: OrbitsService) {}
   
   public init3D(canvas: HTMLElement): void{
     //@ts-ignore
@@ -32,7 +35,7 @@ export class EngineService {
     return scene;
   }
 
-  private createPlanets(scene: BABYLON.Scene): BABYLON.Mesh[]{
+  private createPlanets(scene: BABYLON.Scene): void{
     let planetsMeshesArray: BABYLON.Mesh[] = [];
     PlanetOrbits.GetAllPlanets().forEach((planet: Planet): void => {
       const planetMesh = BABYLON.Mesh.CreateSphere(
@@ -46,8 +49,8 @@ export class EngineService {
         planetMesh.position.x = planet.orbitDiameter;
         planetsMeshesArray.push(planetMesh);
     });
-    this.movePlanets(planetsMeshesArray);
-    return planetsMeshesArray;
+    this.orbitService.planetsCreated.next(planetsMeshesArray);
+    // this.movePlanets(planetsMeshesArray);
   }
 
   private movePlanets(planetsMeshesArray: BABYLON.Mesh[]): void{
