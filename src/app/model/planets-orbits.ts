@@ -19,6 +19,9 @@ export class Planet extends CelestialBody{
             }
     }
 
+    public get moons(): Moon[]{
+        return this._moons;
+    }
 }
 export class PlanetOrbits{
     public static readonly Sun = new Planet(

@@ -3,6 +3,8 @@ import * as BABYLON from 'babylonjs';
 import { Planet, PlanetOrbits } from '../model/planets-orbits';
 import { MKM, OrbitInDays } from '../model/distance-types';
 import { OrbitsService } from './orbits.service';
+import { CelestialBody } from '../model/celestial-body';
+import { Moon } from '../model/moon';
 @Injectable({
   providedIn: 'root'
 })
@@ -31,25 +33,44 @@ export class EngineService {
     camera.setTarget(BABYLON.Vector3.Zero());
     camera.attachControl(canvas, false);
     var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
-    this.createPlanets(scene);
+    this.createCelestialBodies(scene);
     return scene;
   }
 
-  private createPlanets(scene: BABYLON.Scene): void{
+  private createCelestialBodies(scene: BABYLON.Scene): void{
     let planetsMeshesArray: BABYLON.Mesh[] = [];
+    let moonsMeshArray: BABYLON.Mesh[] = [];
     PlanetOrbits.GetAllPlanets().forEach((planet: Planet): void => {
-      const planetMesh = BABYLON.Mesh.CreateSphere(
-        planet.planetName, 
-        16, 
-        planet.diameter / 1000, 
-        scene, 
-        false, 
-        BABYLON.Mesh.FRONTSIDE
-        );
-        planetMesh.position.x = planet.orbitDiameter;
-        planetsMeshesArray.push(planetMesh);
+      const planetMesh = this.createCelestialBody(planet, scene);
+      planetMesh.position.x = planet.orbitDiameter;
+      planetsMeshesArray.push(planetMesh);
+      if(planet.moons.length > 0) {
+        const moonMesh = this.createMoons(planet.moons, planet.orbitDiameter, scene);
+        moonsMeshArray.push(...moonMesh);
+      }
     });
     this.orbitService.planetsCreated.next(planetsMeshesArray);
-    // this.movePlanets(planetsMeshesArray);
+  }
+
+  private createMoons(moons: Moon[], planetOrbitDiameter: MKM, scene: BABYLON.Scene): BABYLON.Mesh[]{
+    const moonsMeshArray: BABYLON.Mesh[] = [];
+    moons.forEach((moon: Moon): void => {
+      const moonMesh = this.createCelestialBody(moon, scene);
+      moonMesh.position.x = (planetOrbitDiameter + moon.orbitDiameter);
+      moonsMeshArray.push(moonMesh);
+    })
+
+    return moonsMeshArray;
+  }
+
+  private createCelestialBody(celesialBody: CelestialBody, scene: BABYLON.Scene): BABYLON.Mesh{
+    return BABYLON.Mesh.CreateSphere(
+      celesialBody.planetName, 
+      16, 
+      celesialBody.diameter / 1000, 
+      scene, 
+      false, 
+      BABYLON.Mesh.FRONTSIDE
+      );
   }
 }
