@@ -52,34 +52,4 @@ export class EngineService {
     this.orbitService.planetsCreated.next(planetsMeshesArray);
     // this.movePlanets(planetsMeshesArray);
   }
-
-  private movePlanets(planetsMeshesArray: BABYLON.Mesh[]): void{
-    planetsMeshesArray.forEach((planetMesh: BABYLON.Mesh): void =>{
-      const foundPlanetData = this.getPlanetData(planetMesh.name);
-      const daysOfSymulation = 270;
-      planetMesh.position.z = this.calculateCoordinate(foundPlanetData, daysOfSymulation);
-      planetMesh.position.x = this.calculateCoordinate(foundPlanetData, daysOfSymulation, true);
-      planetMesh.position.y = planetMesh.position.z * foundPlanetData.orbitalInclanation / 100;
-    });
-  }
-
-  private getPlanetData(planetName: string): Planet {
-    return PlanetOrbits.GetAllPlanets()
-    .filter((planet: Planet): boolean => planetName === planet.planetName)[0];
-  }
-
-  private calculateCoordinate(foundPlanetData: Planet, dayOfOrbit: number,isXCoordinate?: boolean): MKM{
-    const r = foundPlanetData.orbitDiameter;
-    const orbitInDays = foundPlanetData.orbitLength;
-    if(r === 0 || orbitInDays === 0){
-      return 0 as MKM;
-    }
-    const xMultiplayer = isXCoordinate? Math.PI/2: 0;
-    const orbitPosition = Math.sin(this.getRadianOfOrbit(dayOfOrbit,orbitInDays)+ xMultiplayer) * r;
-    return orbitPosition as MKM;
-  }
-
-  private getRadianOfOrbit(dayOfOrbit: number, orbitInDays: OrbitInDays): number{
-    return ((dayOfOrbit%orbitInDays)/orbitInDays)*Math.PI*2;
-  }
 }
