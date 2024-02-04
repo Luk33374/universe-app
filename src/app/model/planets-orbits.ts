@@ -1,45 +1,24 @@
+import { CelestialBody } from "./celestial-body";
 import { KM, MKM, OrbitInDays, OrbitInclanationPrecent } from "./distance-types";
+import { Moon } from "./moon";
 
-export class Planet{
-    private _name: string;
-    private _diameter: KM;
-    private _orbitDiameter: MKM;
-    private _orbitLength: OrbitInDays;
-    private _orbitalInclanation: OrbitInclanationPrecent;
+export class Planet extends CelestialBody{
+    protected _moons: Moon[] = [];
 
     constructor(
         name: string,
         diameter: KM,
         orbitDiameter: MKM,
         orbitLength: OrbitInDays,
-        orbitInclanation: OrbitInclanationPrecent
+        orbitInclanation: OrbitInclanationPrecent,
+        moons?: Moon[]
         ){
-        this._name = name;
-        this._diameter = diameter;
-        this._orbitDiameter = orbitDiameter;
-        this._orbitLength = orbitLength;
-        this._orbitalInclanation = orbitInclanation;
+            super(name, diameter, orbitDiameter, orbitLength, orbitInclanation);
+            if(moons) {
+                this._moons = moons;
+            }
     }
 
-    public get diameter(): KM {
-        return this._diameter;
-    }
-
-    public get orbitDiameter(): MKM {
-        return this._orbitDiameter;
-    }
-
-    public get planetName(): string{
-        return this._name;
-    }
-
-    public get orbitLength(): OrbitInDays{
-        return this._orbitLength;
-    }
-
-    public get orbitalInclanation(): OrbitInclanationPrecent{
-        return this._orbitalInclanation;
-    }
 }
 export class PlanetOrbits{
     public static readonly Sun = new Planet(
@@ -63,12 +42,20 @@ export class PlanetOrbits{
         224.7 as OrbitInDays,
         3.4 as OrbitInclanationPrecent
         );
+    private static readonly Moon = new Moon(
+            'Moon',
+            3475 as KM,
+            0.384 as MKM,
+            27.3 as OrbitInDays,
+            5.1 as OrbitInclanationPrecent
+        );
     public static readonly Earth = new Planet(
         'Earth',
         12756 as KM,
         149.6 as MKM,
         365.2 as OrbitInDays,
-        0 as OrbitInclanationPrecent
+        0 as OrbitInclanationPrecent,
+        [this.Moon]
         );
     public static readonly Mars = new Planet(
         'Mars',
