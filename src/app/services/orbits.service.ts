@@ -3,6 +3,7 @@ import * as BABYLON from 'babylonjs';
 import { Subject } from 'rxjs';
 import { Planet, PlanetOrbits } from '../model/planets-orbits';
 import { MKM, OrbitInDays } from '../model/distance-types';
+import { CelestialBody } from '../model/celestial-body';
 
 @Injectable({
   providedIn: 'root'
@@ -27,16 +28,34 @@ export class OrbitsService {
       const foundPlanetData = this.getPlanetData(planetMesh.name);
       planetMesh.position.z = this.calculateCoordinate(foundPlanetData, daysOfSymulation);
       planetMesh.position.x = this.calculateCoordinate(foundPlanetData, daysOfSymulation, true);
-      planetMesh.position.y = planetMesh.position.z * foundPlanetData.orbitalInclanation / 100;
+      planetMesh.position.y = this.calculateOrbitInclanation(planetMesh.position.z as MKM, foundPlanetData);
+
+      this.asignCoordinatesToModel(
+        foundPlanetData,
+        planetMesh.position.x as MKM,
+        planetMesh.position.y as MKM,
+        planetMesh.position.z as MKM
+        );
     });
+    console.log(PlanetOrbits.GetAllPlanets());
   }
 
-  private getPlanetData(planetName: string): Planet {
+  private asignCoordinatesToModel(planetFromModel: CelestialBody, x: MKM, y: MKM, z: MKM): void{
+    planetFromModel.x = x;
+    planetFromModel.z = z;
+    planetFromModel.y = y;
+  }
+
+  private calculateOrbitInclanation(z: MKM, foundPlanetData: CelestialBody): MKM {
+    return (z * foundPlanetData.orbitalInclanation / 100) as MKM;
+  }
+
+  private getPlanetData(planetName: string): CelestialBody {
     return PlanetOrbits.GetAllPlanets()
     .filter((planet: Planet): boolean => planetName === planet.planetName)[0];
   }
 
-  private calculateCoordinate(foundPlanetData: Planet, dayOfOrbit: number,isXCoordinate?: boolean): MKM{
+  private calculateCoordinate(foundPlanetData: CelestialBody, dayOfOrbit: number,isXCoordinate?: boolean): MKM{
     const r = foundPlanetData.orbitDiameter;
     const orbitInDays = foundPlanetData.orbitLength;
     if(r === 0 || orbitInDays === 0){

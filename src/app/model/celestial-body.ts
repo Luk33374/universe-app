@@ -6,6 +6,9 @@ export class CelestialBody{
     protected _orbitDiameter: MKM;
     protected _orbitLength: OrbitInDays;
     protected _orbitalInclanation: OrbitInclanationPrecent;
+    public x: MKM = 0 as MKM;
+    public z: MKM = 0 as MKM;
+    public y: MKM = 0 as MKM;
     
     constructor(
         name: string,
